@@ -3,90 +3,33 @@
     "id": 1,
     "title": "Xbox S",
     "description": "Consola de Microsoft",
-    "thumbnail": "No tiene",
-    "price": 299.99,
-    "stock": 50,
-    "code": "xbox77"
+    "price": 54,
+    "stock": 100,
+    "code": "xbox77",
+    "category": "consolas",
+    "status": true,
+    "thumbnails": []
   },
   {
     "id": 2,
     "title": "Wii",
     "description": "Consola de Nintendo",
-    "thumbnail": "No tiene",
-    "price": 199.99,
-    "stock": 150,
-    "code": "wii85"
+    "price": 54,
+    "stock": 100,
+    "code": "wii85",
+    "category": "consolas",
+    "status": true,
+    "thumbnails": []
   },
   {
     "id": 3,
     "title": "PS5",
     "description": "Consola de Sony",
-    "thumbnail": "No tiene",
-    "price": 499.99,
-    "stock": 10,
-    "code": "ps598"
-  },
-  {
-    "id": 4,
-    "title": "PS4",
-    "description": "Consola de Sony",
-    "thumbnail": "No tiene",
-    "price": 350,
-    "stock": 50,
-    "code": "ps497"
-  },
-  {
-    "id": 5,
-    "title": "Nintendo 64",
-    "description": "Consola de Nintendo",
-    "thumbnail": "No tiene",
-    "price": 50,
-    "stock": 5,
-    "code": "n648"
-  },
-  {
-    "id": 6,
-    "title": "Wii U",
-    "description": "Consola de Nintendo",
-    "thumbnail": "No tiene",
-    "price": 149.99,
-    "stock": 100,
-    "code": "wiiu7"
-  },
-  {
-    "id": 7,
-    "title": "Xbox 360",
-    "description": "Consola de Microsoft",
-    "thumbnail": "No tiene",
-    "price": 99.99,
-    "stock": 89,
-    "code": "x3608"
-  },
-  {
-    "id": 8,
-    "title": "Oculus",
-    "description": "Sin información",
-    "thumbnail": "No tiene",
-    "price": 399.99,
-    "stock": 1,
-    "code": "ocv5"
-  },
-  {
-    "id": 9,
-    "title": "Sin nombre",
-    "description": "Consola de Sony",
-    "thumbnail": "No tiene",
-    "price": 799.99,
-    "stock": 110,
-    "code": "xxx99"
-  },
-  {
-    "id": 10,
-    "title": "Sin nombre",
-    "description": "Consola de Nintendo",
-    "thumbnail": "No tiene",
-    "price": 499.99,
-    "stock": 10,
-    "code": "xxx98"
+    "price": 200,
+    "stock": 1000,
+    "code": "ps598",
+    "category": "consolas",
+    "status": true,
+    "thumbnails": []
   }
 ]

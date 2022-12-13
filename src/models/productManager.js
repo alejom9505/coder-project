@@ -50,7 +50,11 @@ class ProductManager {
   //Metodo para agregar un producto
   async addProduct(product, productsArray = null) {
     //Desestructurando el producto
-    const { title, description, thumbnail, price, stock, code } = product;
+    const { title, description, price, stock, code, category } = product;
+    let { thumbnails, status } = product;
+    //Valores por defecto
+    thumbnails ? "" : (thumbnails = []);
+    status ? "" : (status = true);
     //Validación del producto
     try {
       if (!title || typeof title !== "string") {
@@ -64,10 +68,8 @@ class ProductManager {
       if (!price || typeof price !== "number") {
         throw new Error("Un precio es requerido! / tipo de dato invalido");
       }
-      if (!thumbnail || typeof thumbnail !== "string") {
-        throw new Error(
-          "Un enlace a la imagen es requerido! / tipo de dato invalido"
-        );
+      if (!Array.isArray(thumbnails)) {
+        throw new Error("Tipo de dato invalido en thumbnails");
       }
       if (!stock || typeof stock !== "number") {
         throw new Error("Una cantidad es requerida! / tipo de dato invalido");
@@ -75,6 +77,22 @@ class ProductManager {
       if (!code || typeof code !== "string") {
         throw new Error("Un codigo es requerido! / tipo de dato invalido");
       }
+      if (typeof status !== "boolean") {
+        throw new Error("Tipo de dato invalido en status");
+      }
+      if (!category || typeof category !== "string") {
+        throw new Error("Una categoria es requerida! / tipo de dato invalido");
+      }
+      product = {
+        title,
+        description,
+        price,
+        stock,
+        code,
+        category,
+        status,
+        thumbnails,
+      };
       //Leyendo los productos
       let products;
       if (!productsArray) {
@@ -87,13 +105,14 @@ class ProductManager {
         throw new Error("Producto existente!");
       }
       //Creando el nuevo producto
-      products.push({
+      const newProduct = {
         id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
         ...product,
-      });
+      };
+      products.push(newProduct);
       //Escribiendo el producto
       await writeFile(this.#filePath, JSON.stringify(products));
-      return "Producto agregado exitosamente";
+      return newProduct;
     } catch (error) {
       if (!error.origin) {
         error.origin = "addProduct()";
@@ -141,7 +160,7 @@ class ProductManager {
         } else {
           error.origin += error.origin + " -> getProductById()";
         }
-        throw error;
+        console.log(error);
       }
     } else {
       products = [...productsArray];
@@ -157,7 +176,8 @@ class ProductManager {
   //Actualizar un objeto
   async updateProduct(code, update, productsArray = null) {
     //Desestructurando el producto
-    const { title, description, price, thumbnail, stock } = update;
+    const { title, description, price, thumbnails, stock, status, category } =
+      update;
     //Validación del producto
     try {
       if (update.hasOwnProperty("title")) {
@@ -177,16 +197,26 @@ class ProductManager {
           throw new Error("Un precio es requerido! / tipo de dato invalido");
         }
       }
-      if (update.hasOwnProperty("thumbnail")) {
-        if (!thumbnail || typeof thumbnail !== "string") {
-          throw new Error(
-            "Un enlace a la imagen es requerido! / tipo de dato invalido"
-          );
+      if (update.hasOwnProperty("thumbnails")) {
+        if (!thumbnails || !Array.isArray(thumbnails)) {
+          throw new Error("Tipo de dato invalido");
         }
       }
       if (update.hasOwnProperty("stock")) {
         if (!stock || typeof stock !== "number") {
           throw new Error("Una cantidad es requerida! / tipo de dato invalido");
+        }
+      }
+      if (update.hasOwnProperty("category")) {
+        if (!category || typeof category !== "string") {
+          throw new Error(
+            "Una categoria es requerida! / tipo de dato invalido"
+          );
+        }
+      }
+      if (update.hasOwnProperty("status")) {
+        if (!status || typeof status !== "boolean") {
+          throw new Error("Un status es requerido! / tipo de dato invalido");
         }
       }
       if (update.hasOwnProperty("code")) {
@@ -199,23 +229,34 @@ class ProductManager {
       } else {
         products = [...productsArray];
       }
+
       //Se busca el indice del producto a actualizar
-      const indexOfProduct = products.findIndex(
-        (element) => element.code === code
-      );
+      let indexOfProduct;
       //Se trae el prodcuto original
-      const product = await this.getProductById(code, products);
+      let product;
+      if (isNaN(Number(code))) {
+        indexOfProduct = products.findIndex((element) => element.id === code);
+        product = await this.getProductById(code, products);
+      } else {
+        indexOfProduct = products.findIndex((element) => element.code === code);
+        product = await this.getProductByAutoId(code, products);
+      }
       if (!product) {
         throw new Error("Producto no encontrado");
       }
       //Se crea el producto actualizado
       const updateProduct = { ...product, ...update };
+      //Validando si hay propiedades no validas
+      console.log(updateProduct);
+      if (Object.keys(updateProduct).length !== 9) {
+        throw new Error("Esta tratando de agregar una propiedad invalida!");
+      }
       //Se actualiza el array
       products.splice(indexOfProduct, 1, updateProduct);
       const updateProducts = [...products];
       //Se escribe el archivo
       await writeFile(this.#filePath, JSON.stringify(updateProducts));
-      return "Producto actualizado exitosamente";
+      return updateProduct;
     } catch (error) {
       if (!error.origin) {
         error.origin = "updateProduct()";
@@ -234,9 +275,12 @@ class ProductManager {
       } else {
         products = [...productsArray];
       }
-      const updateProducts = products.filter(
-        (product) => product.code !== code
-      );
+      let updateProducts;
+      if (isNaN(Number(code))) {
+        updateProducts = products.filter((product) => product.code !== code);
+      } else {
+        updateProducts = products.filter((product) => product.id !== code);
+      }
       if (products.length === updateProducts.length) {
         throw new Error("El producto no existe");
       }
