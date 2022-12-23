@@ -2,22 +2,29 @@
 const express = require("express");
 const products = express.Router();
 
-//Controllers
-const productsController = require("../controllers/products");
+module.exports = function (io) {
+  //Controllers
+  const productsController = require("../controllers/products")(io);
 
-// '/api/products' => GET
-products.get("/", productsController.getProducts);
+  ////Routes
 
-// '/api/products/:pid' => GET
-products.get("/:pid", productsController.getProductById);
+  // '/api/products' => GET
+  products.get("/", productsController.getProducts);
 
-// '/api/products/' => POST
-products.post("/", productsController.postProduct);
+  // '/api/products/realtimeproducts' => GET
+  products.get("/realtimeproducts", productsController.getRealTimeProducts);
 
-// '/api/products/:pid' => PUT
-products.put("/:pid", productsController.putProduct);
+  // '/api/products/:pid' => GET
+  products.get("/:pid", productsController.getProductById);
 
-// '/api/products/:pid' => DELETE
-products.delete("/:pid", productsController.deleteProduct);
+  // '/api/products/' => POST
+  products.post("/", productsController.postProduct);
 
-module.exports = products;
+  // '/api/products/:pid' => PUT
+  products.put("/:pid", productsController.putProduct);
+
+  // '/api/products/:pid' => DELETE
+  products.delete("/:pid", productsController.deleteProduct);
+
+  return products;
+};
